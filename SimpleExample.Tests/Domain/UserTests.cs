@@ -151,4 +151,5 @@ public class UserTests
         act.Should().Throw<ArgumentException>()
            .WithMessage("*Sähköpostin tulee olla kelvollinen*");
     }
+    
 }
