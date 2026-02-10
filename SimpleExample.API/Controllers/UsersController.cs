@@ -42,29 +42,25 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Create a new user
     /// </summary>
-    [HttpPost]
-    public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto createUserDto)
+[HttpPost]
+public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto createUserDto)
+{
+    try
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         UserDto user = await _userService.CreateAsync(createUserDto);
         return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
     }
-
-    /// <summary>
-    /// Update an existing user
-    /// </summary>
-    [HttpPut("{id}")]
-    public async Task<ActionResult<UserDto>> Update(Guid id, [FromBody] UpdateUserDto updateUserDto)
+    catch (ArgumentException ex)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        return BadRequest(new { message = ex.Message });
+    }
+}
 
+[HttpPut("{id}")]
+public async Task<ActionResult<UserDto>> Update(Guid id, [FromBody] UpdateUserDto updateUserDto)
+{
+    try
+    {
         UserDto? user = await _userService.UpdateAsync(id, updateUserDto);
         if (user == null)
         {
@@ -72,6 +68,11 @@ public class UsersController : ControllerBase
         }
         return Ok(user);
     }
+    catch (ArgumentException ex)
+    {
+        return BadRequest(new { message = ex.Message });
+    }
+}
 
     /// <summary>
     /// Delete a user
@@ -86,4 +87,5 @@ public class UsersController : ControllerBase
         }
         return NoContent();
     }
+    
 }
